@@ -21,10 +21,11 @@
   <script>
     // Grab the full query string from the OAuth provider and bounce to the desktop app.
     const params = window.location.search;
-    const path = window.location.pathname; // e.g. /oauth/meta or /oauth/youtube
+    // Strip the GitHub Pages base path (e.g. /socialdesk-auth/oauth/meta → /oauth/meta)
+    const path = window.location.pathname.replace(/^\/socialdesk-auth/, '');
 
     // Build the deep link
-    const deepLink = 'socialdesk://' + path.replace(/^\//, '') + params;
+    const deepLink = 'socialdesk:/' + path + params;
 
     // Redirect to the desktop app
     window.location.href = deepLink;
