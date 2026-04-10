@@ -19,26 +19,32 @@
     <p>Redirecting to SocialDesk...</p>
   </div>
   <script>
-    // Grab the full query string from the OAuth provider and bounce to the desktop app.
     const params = window.location.search;
-    // Strip the GitHub Pages base path (e.g. /socialdesk-auth/oauth/meta → /oauth/meta)
     const path = window.location.pathname.replace(/^\/socialdesk-auth/, '');
 
-    // Build the deep link
+    // Try deep link first (works when app is installed/bundled)
     const deepLink = 'socialdesk:/' + path + params;
 
-    // Redirect to the desktop app
+    // Also try localhost fallback (works in dev mode)
+    // The app listens on port 14920 during OAuth flow
+    const localhostUrl = 'http://localhost:14920' + path + params;
+
+    // Attempt deep link
     window.location.href = deepLink;
 
-    // Show fallback message after a short delay (in case the deep link doesn't work)
+    // After a short delay, try localhost fallback (for dev mode)
+    setTimeout(() => {
+      window.location.href = localhostUrl;
+    }, 1500);
+
+    // Show manual fallback after longer delay
     setTimeout(() => {
       document.getElementById('content').innerHTML = `
         <h2>Authorization complete</h2>
-        <p>If SocialDesk didn't open automatically, copy this link and paste it in the app:</p>
-        <code style="display:block;background:#222;padding:0.75rem;border-radius:6px;margin-top:1rem;word-break:break-all;font-size:0.8rem;color:#a5b4fc">${deepLink}</code>
-        <p style="margin-top:1.5rem">You can close this tab.</p>
+        <p>If SocialDesk didn't open automatically, the app may not be running.</p>
+        <p style="margin-top:1rem">You can close this tab.</p>
       `;
-    }, 2000);
+    }, 4000);
   </script>
 </body>
 </html>
